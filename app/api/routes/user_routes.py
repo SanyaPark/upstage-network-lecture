@@ -1,31 +1,19 @@
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
-from typing import Optional, List
+from typing import List
 from app.service.user_service import UserService
 from app.dependencies import get_user_service
+from app.schemas.user_schemas import (
+    UserCreateRequest,
+    UserUpdateRequest,
+    UserResponse
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-class UserCreate(BaseModel):
-    name: str
-    email: str
-
-
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
-
-
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    created_at: str
-
-
 @router.post("/", response_model=UserResponse)
 async def create_user_api(
-    user: UserCreate, 
+    user: UserCreateRequest, 
     user_service: UserService = Depends(get_user_service)
 ):
     try:
@@ -67,7 +55,7 @@ async def get_user_api(
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user_api(
     user_id: int, 
-    user_update: UserUpdate,
+    user_update: UserUpdateRequest,
     user_service: UserService = Depends(get_user_service)
 ):
     try:
