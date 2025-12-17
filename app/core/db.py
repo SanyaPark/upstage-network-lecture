@@ -22,12 +22,19 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_conn():
+def get_db():
   """
-  기존에는 connection_pool.PymysqlConnectionPool 에서 커넥션을 가져왔지만,
-  이제는 SQLAlchemy Session을 반환함.
+  FastAPI dependency로 사용할 데이터베이스 세션을 생성하고 반환.
+  요청이 끝나면 자동으로 세션을 닫음.
   """
-  return SessionLocal()
+  db = SessionLocal()
+  try:
+    yield db
+  finally:
+    db.close()
+
+
+
 
 
 def release_conn(conn):

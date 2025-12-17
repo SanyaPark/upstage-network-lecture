@@ -9,13 +9,13 @@ class UserService:
         self.user_repo = user_repo
 
     def _valid_email(self, email: str) -> bool:
+        if email == "admin@example.com":
+            raise EmailNotAllowedNameExistsError(email)
         return True
 
     def create_user(self, name: str, email: str) -> Dict[str, Any]:
         if not self._valid_email(email):
             raise ValueError("Invalid email format")
-        if email == "admin@example.com":
-            raise EmailNotAllowedNameExistsError(email)
         # save 추가
         user = self.user_repo.create_user(name=name, email=email)
 
